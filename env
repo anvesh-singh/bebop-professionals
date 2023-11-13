@@ -1,0 +1,17 @@
+MAIL_HOST = smtp.gmail.com
+MAIL_USER = malavyash100@gmail.com
+MAIL_PASS = jccl wrqg rhjm olms
+
+JWT_SECRET = "babbar"
+FOLDER_NAME = "Codehelp"
+
+RAZORPAY_KEY = rzp_test_amyO3Lyo27Oky0
+RAZORPAY_SECRET = DIpHaWnyjHxPV2Bx638BFK7F
+
+CLOUD_NAME = dbuzqgo51
+API_KEY = 969451272369879
+API_SECRET = 2y3lihqDuWXPDEMkUsqBFV7wu-c
+
+
+MONGODB_URL = "mongodb+srv://malavyash100:m4zCedICZh1glYrg@cluster0.xkv8imc.mongodb.net/StudyNotionDatabase"
+PORT = 4000
