@@ -1,51 +1,36 @@
 const express = require("express");
 const app = express();
 
-const userRoutes = require("./routes/User");
 
-
-const database = require("./config/database");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
-const {cloudinaryConnect} = require("./config/cloudinary");
-const fileUpload = require("express-fileupload");
-const dotenv = require("dotenv");
-
-dotenv.config();
-const PORT = process.env.PORT || 4000;
-
-//database connect
-database.connect();
-//middlewares
+const connect = require("./config/db");
+const userRoutes = require("./routes/userRoutes");
+const chatRoutes = require("./routes/chatRoutes");
+const messageRoutes = require("./routes/messageRoutes");
+const { notFound, errorHandler } = require("./middlewares/errorMiddleware");
+require("dotenv").config();
 app.use(express.json());
-app.use(cookieParser());
-app.use(
-    cors({
-        origin:"http:localhost:3000",
-        credentials:true,
-    })
-)
-app.use(
-    fileUpload({
-        useTempFiles:true,
-        tempFileDir:"/tmp",
-    })
-)
-//connect to cloudinary
-cloudinaryConnect();
-app.use("/api/v1/auth",userRoutes);
-//file routes
-const FileUpload = require("./routes/FileUpload");
-app.use("/api/v1",FileUpload);
+connect.connect();
 
-//default route
 app.get("/",(req,res)=>{
-    return res.json({
-        success:true,
-        message:'Your server is up and running...'
-    });
+    res.send("API is Running");
 });
-
-app.listen(PORT,()=>{
-    console.log(`App running at ${PORT}`)
-})
+app.use("/api/user",userRoutes);
+app.use("/api/chat",chatRoutes);
+app.use("/api/message",messageRoutes);
+app.use(notFound);
+app.use(errorHandler);
+const PORT = process.env.PORT || 3000;
+const server = app.listen(PORT,console.log(`SERVER successfully started at PORT ${PORT}`));
+const io = require("socket.io")(server,{
+    pingTimeout:60000,
+    cors:{
+        origin:"http://localhost:3000",
+    },
+});
+io.on("connection",(socket) => {
+    console.log("connected to socket.io");
+    socket.on("setup",(userData)=>{
+    socket.join(userData._id);
+    socket.emit("connected");
+    })
+});
